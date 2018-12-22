@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, url_for, render_template
 import os
 import json
 import glob
+import re
 from uuid import uuid4
 from werkzeug.utils import secure_filename
 from subprocess import Popen, PIPE
@@ -13,23 +14,30 @@ configuration_settings = {}
 configuration_settings['display'] = {}
 configuration_settings['display']['display_output'] = {'hdmi': '', 'none': ''}
 configuration_settings['audio'] = {}
-configuration_settings['audio']['audio_output'] = {'both': '', 'hdmi': '', 'analog': ''}
+configuration_settings['audio']['audio_output'] = {'both': 'checked', 'hdmi': '', 'analog': ''}
 configuration_settings['audio']['audio_muting'] = {'mute': '', 'unmute': ''}
 configuration_settings['player'] = {'time_server_address': 'pool.ntp.org'}
 
+def get_display_status():
+    p = Popen(['vcgencmd', 'display_power'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output, err = p.communicate(b"input data that is passed to subprocess' stdin")
+    if(int(str(output)[16])):
+        return True
+    else:
+        return False
 
 def get_configuration_settings():
-    p = Popen(['vcgencmd', 'displayer_power'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    output, err = p.communicate(b"input data that is passed to subprocess' stdin")
-    if(p.returncode == 'display_power=1'):
-        print("hdmi display is on")
-    elif(p.returncode == 'display_power=0'):
-        print("hdmi display is off")
+    if(get_display_status()):
+        print("Display active")
+        configuration_settings['display']['display_output']['hdmi'] = 'checked'
+        configuration_settings['display']['display_output']['none'] = ''	
     else:
-        print("error: could not get whether there is a display")
+        print("Display not active")
+        configuration_settings['display']['display_output']['hdmi'] = ''
+        configuration_settings['display']['display_output']['none'] = 'checked'	
 
 @app.route("/")
-def index():
+def index() :
     get_configuration_settings()
     return render_template("index.html", configuration=configuration_settings)
 
