@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flask Multiple Upload</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<h1>OMedia Player Interface</h1>
+
+
+Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</strong> in the form below.<p>
+
+<hr><p>
+
+<form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+<!--
+    File Uploads
+-->
+    <div id="heading1">
+        Files:<br>
+    </div>
+    <div id="normal">
+        Select files OR drag them into the box below.
+        <input id="file-picker" type="file" name="file" accept="image/*" multiple><p>
+    </div>
+
+    <div id="dropbox">
+            Drag and Drop Files Here<br />
+    </div><p>
+
+    <fieldset id="progress" style="display: none">
+        <legend>Files Progress</legend>
+
+        <div class="progress-trough">
+            <div id="progress-bar" class="progress-bar">0%</div>
+        </div>
+    </fieldset><p>
+<!--
+    AUDIO
+-->
+    <table>
+        <tr>
+            <td>
+                <div id="heading1">
+                    Audio Output
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_output" value="both" checked> HDMI and Analog<br>
+                    -->
+                    <input type="radio" name="audio_output" value="both" {{configuration['audio']['audio_output']['both']}}> HDMI and Analog<br>
+                </div>
+            </td>
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_muting" value="unmute" checked> Unmute<br>
+                    -->
+                    <input type="radio" name="audio_muting" value="unmute" {{configuration['audio']['audio_muting']['unmute']}}> Unmute<br>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_output" value="hdmi"> HDMI only<br>
+                    -->
+                    <input type="radio" name="audio_output" value="hdmi" {{configuration['audio']['audio_output']['hdmi']}}> HDMI only<br>
+                </div>
+           </td>     
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_muting" value="mute"> Mute<br>
+                    -->
+                    <input type="radio" name="audio_muting" value="mute" {{configuration['audio']['audio_muting']['mute']}}> Mute<br>
+                </div>            
+            </td>   
+        </tr>
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_output" value="analog">  Analog only<br>
+                    -->
+                    <input type="radio" name="audio_output" value="analog" {configuration['audio']['audio_output']['analog']}}>  Analog only<br>
+                </div>             
+            </td>
+        </tr>   
+    </table>   
+<!--
+    Display
+-->
+    <table>
+        <tr>
+            <td>
+                <div id="heading1">
+                    Display Output
+                </div>
+            </td>
+            <td>
+        </tr>
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_output" value="analog">  Analog only<br>
+                    -->
+                    <input type="radio" name="display_output" value="hdmi" {{configuration['display']['display_output']['analog']}}> HDMI<br>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    <!--
+                    <input type="radio" name="audio_output" value="analog">  Analog only<br>
+                    -->
+                    <input type="radio" name="display_output" value="none" {{configuration['display']['display_output']['none']}}> None<br>
+                </div>           
+            </td>        
+        </tr>  
+<!--
+    Player
+-->
+    <table>
+        <tr>
+            <td>
+                <div id="heading1">
+                    Player
+                </div>
+            </td>
+            <td>
+        </tr>
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    <button type="reboot">Reboot</button><br>
+                </div>
+            </td>
+        </tr> 
+        <tr>
+            <td>
+                <div id="radioButtons">
+                    Time Server Address<br>
+                    <input type="text" name="time_server" value={{configuration['player']['time_server_address']}}><br>
+                </div>
+            </td>
+            <td>
+                    <div id="radioButtons">
+                        <br>
+                        <button type="update_time_address">Update Address</button><br>
+                    </div>
+            </td>
+        </tr>  
+    </table>   
+</form>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/uploadr.js') }}"></script>
+
+</body>
+</html>
