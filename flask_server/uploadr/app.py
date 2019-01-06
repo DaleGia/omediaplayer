@@ -21,9 +21,12 @@ configuration_settings['player'] = {'time_server_address': 'pool.ntp.org'}
 def get_display_status():
     p = Popen(['vcgencmd', 'display_power'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate(b"input data that is passed to subprocess' stdin")
-    if(int(str(output)[16])):
+#    if(str(output)[15]) == '1'):
+    if(output.find('1') > -1):
+        print output
         return True
     else:
+        print output
         return False
 
 def get_configuration_settings():
