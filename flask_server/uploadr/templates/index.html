@@ -35,7 +35,7 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         </div>
     </fieldset><p>
 </form>
-<form id="configuration_options" action="/update_configuration/" method="POST" enctype="multipart/form-data">
+<form id="configuration_options" action="/update_configuration" method="POST" enctype="multipart/form-data">
 <!--
     AUDIO
 -->
@@ -50,17 +50,11 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         <tr>
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_output" value="both" checked> HDMI and Analog<br>
-                    -->
-                    <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" value="both" {{configuration['audio']['audio_output']['both']}}> HDMI and Analog
+                    <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" id="both" value="both" {{configuration['audio']['audio_output']['both']}}> HDMI and Analog
                 </div>
             </td>
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_muting" value="unmute" checked> Unmute<br>
-                    -->
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_muting" value="unmute" {{configuration['audio']['audio_muting']['unmute']}}> Unmute
                 </div>
             </td>
@@ -68,17 +62,11 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         <tr>
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_output" value="hdmi"> HDMI only<br>
-                    -->
-                    <input type="radio" onclick="document.getElementById('configuration_options').submit()';" name="audio_output" value="hdmi" {{configuration['audio']['audio_output']['hdmi']}}> HDMI only
+                    <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" value="hdmi" {{configuration['audio']['audio_output']['hdmi']}}> HDMI only
                 </div>
            </td>     
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_muting" value="mute"> Mute<br>
-                    -->
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_muting" value="mute" {{configuration['audio']['audio_muting']['mute']}}> Mute
                 </div>            
             </td>   
@@ -86,9 +74,6 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         <tr>
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_output" value="analog">  Analog only<br>
-                    -->
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" value="analog" {configuration['audio']['audio_output']['analog']}}>  Analog only
                 </div>             
             </td>
@@ -109,9 +94,6 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         <tr>
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_output" value="analog">  Analog only<br>
-                    -->
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="display_output" value="hdmi" {{configuration['display']['display_output']['hdmi']}}> HDMI
                 </div>
             </td>
@@ -119,9 +101,6 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         <tr>
             <td>
                 <div id="radioButtons">
-                    <!--
-                    <input type="radio" name="audio_output" value="analog">  Analog only<br>
-                    -->
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="display_output" value="none" {{configuration['display']['display_output']['none']}}> None
                 </div>           
             </td>        

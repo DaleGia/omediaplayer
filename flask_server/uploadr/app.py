@@ -6,7 +6,8 @@ import re
 from uuid import uuid4
 from werkzeug.utils import secure_filename
 from subprocess import Popen, PIPE
-
+import subprocess 
+from time import sleep
 app = Flask(__name__)
 UPLOAD_FOLDER="uploadr/static/uploads/"
 
@@ -24,9 +25,11 @@ def get_display_status():
 #    if(str(output)[15]) == '1'):
     if(output.find('1') > -1):
         print output
+        print "output deemed on"
         return True
     else:
         print output
+        print "output deemed off"
         return False
 
 def get_configuration_settings():
@@ -93,6 +96,38 @@ def upload_complete(uuid):
         files=files,
     )
 
+@app.route("/update_configuration", methods=["POST"])
+def update_configuration():
+    if(request.form.get('audio_output', 'error') == 'both'):
+        print("audio_output: both")
+    elif(request.form.get('audio_output', 'error') == 'hdmi'):
+        print("audio_output: hdmi")
+    elif(request.form.get('audio_output', 'error') == 'analog'):
+        print("audio_output: analog")
+    else:
+        print("audio_output: error")
+
+    if(request.form.get('audio_output', 'error') == 'mute'):
+        print("audio_muting: mute")
+    if(request.form.get('audio_output', 'error') == 'unmute'):
+        print("audio_muting: unmute")
+    else:
+        print("audio_muting: error")
+
+    if(request.form.get('display_output', 'error') == 'hdmi'):
+        print("display_output: hdmi")
+        p = subprocess.Popen(["vcgencmd", "display_power 1"])
+        p.wait()
+    
+    elif(request.form.get('display_output', 'error') == 'none'):
+        print("display_output: none")
+        p = subprocess.Popen(["vcgencmd", "display_power 0"])
+        p.wait()
+    else:
+        print("display_output: error")
+
+    get_configuration_settings()
+    return render_template("index.html", configuration=configuration_settings)
 
 def ajax_response(status, msg):
     status_code = "ok" if status else "error"
