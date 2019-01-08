@@ -18,6 +18,7 @@ class usb_mounter:
             if not(os.path.isdir(drive[1])):
                 if(os.mkdir(drive[1])):
                     print("Created directory: " + drive)
+
     def usb_unmount(self): 
         for drive in self._mount_mapping:
             # tests if USB drive is mounted
@@ -62,11 +63,14 @@ class usb_mounter:
                    print(drive[0] + " is already mounted to: " + drive[1])        
             print("")
         # Clear old playlist
+        self.playlist_lock.acquire()
         self.playlist.clear()
 	# Get all of the file paths from the /mnt/ directories
         for extension in self._file_formats:
             for drive in self._mount_mapping:
                 os.chdir(drive[1])
-                self.playlist.extend(glob.glob("*"+extension))
+                for file in glob.glob("*"+extension):
+                   self.playlist.append(drive[1] + "/" + file)
         # sort files alphabetically
         self.playlist.sort()
+        self.playlist_lock.release()
