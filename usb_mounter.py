@@ -1,12 +1,14 @@
 import os
 import subprocess
 import glob
+import threading
 
 class usb_mounter:
     def __init__(self):
         # Place to store playlist file filepaths
 
         self.playlist = []
+        self.playlist_lock = threading.Lock()
         self._mount_mapping = [("/dev/sda1", "/mnt/omedia_usb1", "sda"), ("/dev/sdb1", "/mnt/omedia_usb2", "sdb"), ("/dev/sdc1", "/mnt/omedia_usb3", "sdc"), ("/dev/sdd1", "/mnt/omedia_usb4", "sdd")]
         self._file_formats = [".avi", ".mov", ".mkv", ".mp4", ".m4v", ".mp3"]
         # check whether omedia_usb1, omedia_usb2, omedia_usb3, 
@@ -64,6 +66,7 @@ class usb_mounter:
 	# Get all of the file paths from the /mnt/ directories
         for extension in self._file_formats:
             for drive in self._mount_mapping:
-                self.playlist.extend(glob.glob(drive[1]+extension))
+                os.chdir(drive[1])
+                self.playlist.extend(glob.glob("*"+extension))
         # sort files alphabetically
         self.playlist.sort()
