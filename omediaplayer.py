@@ -1,6 +1,7 @@
-import vlc
+import usb_mounter
 
-url = '/home/dg/Downloads/test.avi'
-player = vlc.mediaPlayer()
-player.fullscreen.enter()
-player.play(url)
+def main():
+    print("starting")
+    usb = usb_mounter()
+    usb.usb_mount()
+    print("finished")
