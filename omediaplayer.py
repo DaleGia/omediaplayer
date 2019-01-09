@@ -3,17 +3,19 @@ import networking
 import time
 import threading
 import subprocess
+import runserver
 
 def main():
     print("starting")
-#    usb = usb_mounter.usb_mounter()
+    usb = usb_mounter.usb_mounter()
     network = networking.networking()
-#    usb_mounting_thread = threading.Thread(target=mount_loop, args=(usb, 0.5))
+    usb_mounting_thread = threading.Thread(target=mount_loop, args=(usb, 0.5))
     splash_screen_thread = threading.Thread(target=splash_screen_renderer, args=(network, 1))
-#    usb_mounting_thread.start()
+    web_server_thread = threading.Thread(target=
+    usb_mounting_thread.start()
     splash_screen_thread.start()
     splash_screen_thread.join()
-#    usb_mounting_thread.join() 
+    usb_mounting_thread.join() 
 
     print("finished")
 def splash_screen_renderer(network, poll_period):
@@ -36,6 +38,7 @@ def splash_screen_renderer(network, poll_period):
 
 def render_splash_screen(eth0_ip_address, wlan0_ip_address):
     p1 = subprocess.Popen(['tput', 'sc'])
+    p1.wait()
     p1 = subprocess.Popen(['figlet', 'eth0: ' + eth0_ip_address, '-ctf', 'term'])
     p1.wait()
     p1 = subprocess.Popen(['figlet', 'wlan0: ' + wlan0_ip_address, '-ctf', 'term'])
@@ -43,6 +46,7 @@ def render_splash_screen(eth0_ip_address, wlan0_ip_address):
     p1 = subprocess.Popen(['figlet', 'Please upload/insert H.264 media content...', '-ctf', 'term'])
     p1.wait()
     p1 = subprocess.Popen(['tput', 'rc'])
+    p1.wait()
 def mount_loop(usb, poll_period):
     while True:
         usb.usb_mount()

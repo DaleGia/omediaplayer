@@ -2,14 +2,15 @@ import os
 import subprocess
 import glob
 import threading
-
+import time
 class usb_mounter:
     def __init__(self):
         # Place to store playlist file filepaths
 
         self.playlist = []
         self.playlist_lock = threading.Lock()
-        self._mount_mapping = [("/dev/sda1", "/mnt/omedia_usb1", "sda"), ("/dev/sdb1", "/mnt/omedia_usb2", "sdb"), ("/dev/sdc1", "/mnt/omedia_usb3", "sdc"), ("/dev/sdd1", "/mnt/omedia_usb4", "sdd")]
+        self._mount_mapping = [("/dev/sda1", "/mnt/omedia_usb1", "sda", False), ("/dev/sdb1", "/mnt/omedia_usb2", "sdb", False), ("/dev/sdc1", "/mnt/omedia_usb3", "sdc", False), ("/dev/sdd1", "/mnt/omedia_usb4", "sdd", False)]
+        self._is_drive_mounted = [False, False, False, False]
         self._file_formats = [".avi", ".mov", ".mkv", ".mp4", ".m4v", ".mp3"]
         # check whether omedia_usb1, omedia_usb2, omedia_usb3, 
         # omedia_usb4 exist. If they don't, create the 
@@ -52,6 +53,26 @@ class usb_mounter:
                    print("Mounting: " + drive[0] + " to: " + drive[1])
                    p1 = subprocess.Popen(["mount", "-t", "vfat", drive[0], drive[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                    p1.wait() 
+                   # Check if mounting was successful
+                   p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                   p1.wait() 
+                   is_mounted = str(p1.communicate()[0]).find(drive[0])
+                   print("is_mounted: " + str(is_mounted))
+                   p1 = subprocess.Popen(["find", "/dev/", "-name", drive[2]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                   p1.wait() 
+                   is_usb_connected = str(p1.communicate()[0]).find(drive[2])
+                   print("is_usb_connected: " + str(is_usb_connected))
+                   if(is_mounted > -1):
+                      if(is_usb_connected > -1):
+                          print("Mount successful")
+                          drive = (drive[0], drive[1], drive[2], True)
+                      else:
+                          print("Mount unsuccessful")
+                          drive = (drive[0], drive[1], drive[2], False)
+                   else:
+                       print("Mount unsuccessful")
+                       drive = (drive[0], drive[1], drive[2], False)
+
                 else:
                    print("No USB connected to " + drive[0])
             else:
@@ -60,7 +81,7 @@ class usb_mounter:
                    p1 = subprocess.Popen(["umount", drive[1]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                    p1.wait()
                 else:
-                   print(drive[0] + " is already mounted to: " + drive[1])        
+                   print(drive[0][0] + " is already mounted to: " + drive[1])        
             print("")
         # Clear old playlist
         self.playlist_lock.acquire()

@@ -19,6 +19,8 @@ configuration_settings['audio']['audio_output'] = {'both': 'checked', 'hdmi': ''
 configuration_settings['audio']['audio_muting'] = {'mute': '', 'unmute': ''}
 configuration_settings['player'] = {'time_server_address': 'pool.ntp.org'}
 
+usb_paths = []
+
 def get_display_status():
     p = Popen(['vcgencmd', 'display_power'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate(b"input data that is passed to subprocess' stdin")
@@ -42,10 +44,26 @@ def get_configuration_settings():
         configuration_settings['display']['display_output']['hdmi'] = ''
         configuration_settings['display']['display_output']['none'] = 'checked'	
 
+def get_available_usb_paths():
+    usb_paths.clear()
+
+    p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    p1.wait()
+
+    if(str(p1.communicate()[0]).find("/dev/sda1"))
+        usb_paths.append("/dev/sda1")
+    if(str(p1.communicate()[0]).find("/dev/sdb1"))
+        usb_paths.append("/dev/sdb1")
+    if(str(p1.communicate()[0]).find("/dev/sdc1"))
+        usb_paths.append("/dev/sdc1")
+    if(str(p1.communicate()[0]).find("/dev/sdd1"))
+        usb_paths.append("/dev/sdd1")
+
 @app.route("/")
 def index() :
     get_configuration_settings()
-    return render_template("index.html", configuration=configuration_settings)
+    get_available_usb_paths()
+    return render_template("index.html", configuration=configuration_settings, usb=usb_paths)
 
 
 @app.route("/upload", methods=["POST"])
