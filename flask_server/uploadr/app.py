@@ -21,8 +21,9 @@ configuration_settings['display']['display_output'] = {'hdmi': '', 'none': ''}
 configuration_settings['audio'] = {}
 configuration_settings['audio']['audio_output'] = {'both': 'checked', 'hdmi': '', 'analog': ''}
 configuration_settings['audio']['audio_muting'] = {'mute': '', 'unmute': ''}
-configuration_settings['player'] = {'time_server_address': 'pool.ntp.org'}
 configuration_settings['dropbox'] = {'css_width': '0', 'html': ''}
+configuration_settings['playlist'] = {'html': ''}
+
 
 def get_display_status():
     p = Popen(['vcgencmd', 'display_power'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -47,36 +48,57 @@ def get_configuration_settings():
         print("Display not active")
         configuration_settings['display']['display_output']['hdmi'] = ''
         configuration_settings['display']['display_output']['none'] = 'checked'	
-def get_form(number):
+
+def get_usb_path_form(number):
     return """<td><form id="upload-form-{}" action="/upload_usb{}" method="POST" enctype="multipart/form-data"><b>/mnt/omedia_usb{}</b><div class="dropbox" id="dropbox{}">Drag and Drop Files Here<p><input id="file-picker-{}" class="file-picker" type="file" accept="H.264/*" multiple><p></div></form></td>""".format(number, number, number ,number, number)
  
+def get_file_paths_form(file_path):
+    return """<tr><td>{}</td><td><button type="button" onclick=deleteFile({})>delete</button></td></tr>""".format(file_path, file_path)
 
 def get_available_usb_paths():
     configuration_settings['dropbox']['html'] = ''
     configuration_settings['dropbox']['css_width'] = 0
+    configuration_settings['playlist']['html'] = ''
+    playlist = []
+
     css_width_count = 0
     p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     p1.wait()
     output = str(p1.communicate()[0])
     if(output.find("/dev/sda1") > -1):
-        configuration_settings['dropbox']['html'] += get_form(1)
+        configuration_settings['dropbox']['html'] += get_usb_path_form(1)
         css_width_count += 1
+        for file in glob.glob("/mnt/omedia_usb1/*"):
+            playlist.append(file)
+
 
     if(output.find("/dev/sdb1") > -1):
-        configuration_settings['dropbox']['html'] += get_form(2)
+        configuration_settings['dropbox']['html'] +=  get_usb_path_form(2)
         css_width_count += 1
+        for file in glob.glob("/mnt/omedia_usb2/*"):
+            playlist.append(file)
 
     if(output.find("/dev/sdc1") > -1):
         configuration_settings['dropbox']['html'] += "</tr><tr>"
-        configuration_settings['dropbox']['html'] += get_form(3)
+        configuration_settings['dropbox']['html'] +=  get_usb_path_form(3)
         css_width_count += 1
+        for file in glob.glob("/mnt/omedia_usb3/*"):
+            playlist.append(file)
 
     if(output.find("/dev/sdd1") > -1):
-        configuration_settings['dropbox']['html'] += get_form(4) 
+        configuration_settings['dropbox']['html'] +=  get_usb_path_form(4) 
         css_width_count += 1
-    
+        for file in glob.glob("/mnt/omedia_usb4/*"):
+            playlist.append(file)
+
     configuration_settings['dropbox']['html'] = Markup( configuration_settings['dropbox']['html'])
     configuration_settings['dropbox']['css_width'] = Markup(str(90/css_width_count)+"vw")
+
+    playlist.sort()
+    for file in playlist:
+        configuration_settings['playlist']['html'] += get_file_paths_form(file)
+
+    configuration_settings['playlist']['html'] = Markup(configuration_settings['playlist']['html'])
 
 def reboot():
     os.system('sleep 3; reboot')
@@ -133,57 +155,7 @@ def upload_handler(form, upload_path):
     if is_ajax:
         return ajax_response(True, upload_key)
     else:
-#        return redirect(url_for("upload_complete", uuid=upload_key))
         return render_template("index.html", configuration=configuration_settings)
-
-#@app.route("/upload", methods=["POST"])
-#def upload():
-#    """Handle the upload of a file."""
-#    form = request.form
-
-    # Create a unique "session ID" for this particular batch of uploads.
-#    upload_key = str(uuid4())
-
-    # Is the upload using Ajax, or a direct POST by the form?
-#    is_ajax = False
-#    if form.get("__ajax", None) == "true":
-#        is_ajax = True
-
-#    print("=== Form Data ===")
-#    for key, value in list(form.items()):
-#        print(key, "=>", value)
-
-#    for upload in request.files.getlist("file"):
-#        filename = upload.filename.rsplit("/")[0]
-#        destination = "/".join([UPLOAD_FOLDER, filename])
-#        secure_filename(destination)
-#        print("Accept incoming file:", filename)
-#        print("Save it to:", destination)
-#        upload.save(destination)
-
-#    if is_ajax:
-#        return ajax_response(True, upload_key)
-#    else:
-#        return redirect(url_for("upload_complete", uuid=upload_key))
-#        return render_template("index.html", configuration=configuration_settings)
-
-
-#@app.route("/files/<uuid>")
-#def upload_complete(uuid):
-    # Get their files.
-#    root = "uploadr/static/uploads/{}".format(uuid)
-#    if not os.path.isdir(root):
-#        return "Error: UUID not found!"
-
-#    files = []
-#    for file in glob.glob("{}/*.*".format(root)):
-#        fname = file.split(os.sep)[-1]
-#        files.append(fname)
-
-#    return render_template("index.html",
-#        uuid=uuid,
-#        files=files,
-#    )
 
 @app.route("/reboot")
 def reboot_device():

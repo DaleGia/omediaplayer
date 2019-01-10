@@ -14,8 +14,7 @@ body {
 */
 html
 {
-    font-size: 20px;
-    
+    font-size: 20px;    
 }
 
 #heading1 
@@ -34,6 +33,7 @@ html
 {
     margin: auto
 }
+
 .dropbox {
     border: 1vh solid rgba(0, 0, 0, 1);
     background-color: rgba(0, 0, 0, 0.2);
@@ -45,6 +45,7 @@ html
     font-weight: bold;
     text-align: center;
 }
+
 
 .dropbox.active {
     border: 1vh solid rgba(255, 0, 0, 1);

@@ -18,34 +18,6 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
 
 
 <!--
-    File Uploads
--->
-    <div id="heading1">
-        Files:<br>
-    </div>
-    <div id="normal">
-        Select files OR drag them into the box below.
-    </div>
-    
-    <table>
-        <tr>
-            {{configuration['dropbox']['html']}}
-        </tr>
-    </table>
-    <p>
-
-    <fieldset id="progress" style="display: none">
-        <legend>Files Progress</legend>
-
-        <div class="progress-trough">
-            <div id="progress-bar" class="progress-bar">0%</div>
-        </div>
-    </fieldset><p>
-<!--
-</form>
--->
-
-<!--
     AUDIO
 -->
 <form id="configuration_options" action="/update_configuration" method="POST" enctype="multipart/form-data">
@@ -138,10 +110,54 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         </tr> 
     </table>   
 </form>
+<!--
+    File Uploads
+-->
+    <div id="heading1">
+        Files:<br>
+    </div>
+    <div id="normal">
+        Select files OR drag them into the box below.
+    </div>
+    
+    <table>
+        <tr>
+            {{configuration['dropbox']['html']}}
+        </tr>
+    </table>
+    <div id="heading1">
+        Playlist:<br>
+    </div>
+    <div id="normal">
+        Deleting will delete media from device and cannot be undone.
+    </div>
+<form id="configuration_options" action="/update_configuration" method="POST" enctype="multipart/form-data">
+<form id="deleteFile" action="/deletefile" method="POST" enctype="text/plain" >
+    <table>
+            {{configuration['playlist']['html']}}
+    </table>
+</form>
+    <p>
+
+    <fieldset id="progress" style="display: none">
+        <legend>Files Progress</legend>
+
+        <div class="progress-trough">
+            <div id="progress-bar" class="progress-bar">0%</div>
+        </div>
+    </fieldset><p>
+<!--
+</form>
+-->
+
 <script>
     function reboot() 
     {
         document.getElementById('reboot').submit();
+    }
+    function deleteFile(filePath)
+    {
+        document.getElementById('deleteFile').submit();
     }
 </script>
 
