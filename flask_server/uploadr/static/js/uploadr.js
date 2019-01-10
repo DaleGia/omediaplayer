@@ -6,24 +6,28 @@
 // Change this is current space left on USB. Update it after each upload
 var MAX_UPLOAD_FILE_SIZE = 1024*1024; // 1 MB
 //change this to usb drive.
-var UPLOAD_URL = "/upload";
 var NEXT_URL   = "/";
 
 // List of pending files to handle when the Upload button is finally clicked.
 var PENDING_FILES  = [];
 
+function handle_file_change(event) {
+      	var url = $(this).parent().parent().parent().attr("action");
+        handleFiles(this.files);
+        doUpload(url);
+        //updatePendingFileText();
 
+}
 $(document).ready(function() {
     // Set up the drag/drop zone.
-    initDropbox();
+    var ii;
+    for (ii = 1; ii < 5; ii++) {
+    	initDropbox(ii);
+        $("#file-picker-" + ii).on("change", handle_file_change);
 
-    // Set up the handler for the file input box.
-    $("#file-picker").on("change", function() {
-        handleFiles(this.files);
-        doUpload();
-        //updatePendingFileText();
-    });
-/*
+    }
+
+	/*
     // Handle the submit button.
     $("#upload-button").on("click", function(e) {
         // If the user has JS disabled, none of this code is running but the
@@ -37,7 +41,7 @@ $(document).ready(function() {
 });
 
 
-function doUpload() {
+function doUpload(url) {
     $("#progress").show();
     var $progressBar   = $("#progress-bar");
 
@@ -78,7 +82,7 @@ function doUpload() {
             }
             return xhrobj;
         },
-        url: UPLOAD_URL,
+        url: url,
         method: "POST",
         contentType: false,
         processData: false,
@@ -144,8 +148,8 @@ function updateAvailableFiles()
     $dropbox.append('</table>')   
 
 }
-function initDropbox() {
-    var $dropbox = $("#dropbox");
+function initDropbox(number) {
+    var $dropbox = $("#dropbox" + number);
 
     // On drag enter...
     $dropbox.on("dragenter", function(e) {
@@ -182,7 +186,7 @@ function initDropbox() {
         // Get the files.
         var files = e.originalEvent.dataTransfer.files;
         handleFiles(files);
-        doUpload();
+        doUpload($(this).parent().attr("action"));
        // updatePendingFileText();
         //$dropbox.text(PENDING_FILES.length + " files ready for upload!");
          

@@ -17,8 +17,9 @@ class usb_mounter:
         # directories.
         for drive in self._mount_mapping:
             if not(os.path.isdir(drive[1])):
-                if(os.mkdir(drive[1])):
-                    print("Created directory: " + drive)
+                os.mkdir(drive[1])
+                #if(os.mkdir(drive[1])):
+                    #print("Created directory: " + drive)
 
     def usb_unmount(self): 
         for drive in self._mount_mapping:
@@ -28,7 +29,7 @@ class usb_mounter:
             is_mounted = str(p1.communicate()[0]).find(drive[0])
             # If it isn't, it mounts the drive to it's assigned mount point.
             if(is_mounted != -1):
-                print("unmounting: " + drive[0] + " from " + drive[1])
+               #print("unmounting: " + drive[0] + " from " + drive[1])
                 p1 = subprocess.Popen(["umount", drive[1]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                 p1.wait()
 
@@ -37,52 +38,52 @@ class usb_mounter:
         # Check if directory is already mounted
         for drive in self._mount_mapping:
             # tests if USB drive is mounted
-            print("Searching for mounted drives on:", drive[2])
+            #print("Searching for mounted drives on:", drive[2])
             p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p1.wait()
             is_mounted = str(p1.communicate()[0]).find(drive[0])
-            print("is_mounted: " + str(is_mounted))
-            print("Searching for connected USB devices on:", drive[2])
+            #print("is_mounted: " + str(is_mounted))
+            #print("Searching for connected USB devices on:", drive[2])
             p1 = subprocess.Popen(["find", "/dev/", "-name", drive[2]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p1.wait()
             is_usb_connected = str(p1.communicate()[0]).find(drive[2])
-            print("is_usb_connected: " + str(is_usb_connected))
+            #print("is_usb_connected: " + str(is_usb_connected))
             # If it isn't, it mounts the drive to it's assigned mount point.
             if(is_mounted == -1):
                 if(is_usb_connected > -1):
-                   print("Mounting: " + drive[0] + " to: " + drive[1])
+                   #print("Mounting: " + drive[0] + " to: " + drive[1])
                    p1 = subprocess.Popen(["mount", "-t", "vfat", drive[0], drive[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                    p1.wait() 
-                   # Check if mounting was successful
+                   #Check if mounting was successful
                    p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                    p1.wait() 
                    is_mounted = str(p1.communicate()[0]).find(drive[0])
-                   print("is_mounted: " + str(is_mounted))
+                   #print("is_mounted: " + str(is_mounted))
                    p1 = subprocess.Popen(["find", "/dev/", "-name", drive[2]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                    p1.wait() 
                    is_usb_connected = str(p1.communicate()[0]).find(drive[2])
-                   print("is_usb_connected: " + str(is_usb_connected))
+                   #print("is_usb_connected: " + str(is_usb_connected))
                    if(is_mounted > -1):
                       if(is_usb_connected > -1):
-                          print("Mount successful")
+                          #print("Mount successful")
                           drive = (drive[0], drive[1], drive[2], True)
                       else:
-                          print("Mount unsuccessful")
+                          #print("Mount unsuccessful")
                           drive = (drive[0], drive[1], drive[2], False)
                    else:
-                       print("Mount unsuccessful")
+                       #print("Mount unsuccessful")
                        drive = (drive[0], drive[1], drive[2], False)
 
-                else:
-                   print("No USB connected to " + drive[0])
+                #else:
+                    #print("No USB connected to " + drive[0])
             else:
                 if(is_usb_connected == -1):
-                   print(drive[0] + "has been disconnected. I am unmounting it...")
+                   #print(drive[0] + "has been disconnected. I am unmounting it...")
                    p1 = subprocess.Popen(["umount", drive[1]], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                    p1.wait()
-                else:
-                   print(drive[0][0] + " is already mounted to: " + drive[1])        
-            print("")
+                #else:
+                   #print(drive[0][0] + " is already mounted to: " + drive[1])        
+            #print("")
         # Clear old playlist
         self.playlist_lock.acquire()
         self.playlist.clear()

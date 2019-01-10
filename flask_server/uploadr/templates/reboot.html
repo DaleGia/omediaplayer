@@ -1,0 +1,40 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>
+Reboot redirect
+</title> <link rel="stylesheet" type="text/css" 
+href="{{ url_for('static', filename='css/style.css') }}"> 
+</head> 
+
+<body>
+
+<form id="refresh" action="/">
+</form>
+
+<h1 id="timer"> </h1>
+
+<script type="text/javascript">
+var timerleft = 30;
+var refresh_flag = 0;
+document.getElementById("timer").innerHTML = "Rebooting... Page will automatically refresh in " + timerleft + " seconds...";
+var timer = setInterval(
+    function()
+    {
+        timerleft--;
+        document.getElementById("timer").innerHTML = "Rebooting... Page will automatically refresh in " + timerleft + " seconds...";
+        if(timerleft <= 0)
+        {
+            if(refresh_flag == 0)
+            {
+                document.getElementById("timer").innerHTML = "Refreshing";
+		document.getElementById('refresh').submit();
+        	refresh_flag == 1;
+ 	    }
+ 	}    
+    },
+1000);
+</script>
+
+</body>
+</html>

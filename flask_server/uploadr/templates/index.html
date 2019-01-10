@@ -1,9 +1,14 @@
-<!DOCTYPE html> <html> <head> <title>Flask Multiple 
-Upload</title> <link rel="stylesheet" type="text/css" 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>
+Flask Multiple Upload
+</title> <link rel="stylesheet" type="text/css" 
 href="{{ url_for('static', filename='css/style.css') }}"> 
-</head> <body>
+</head> 
 
 
+<body>
 <h1>OMedia Player Interface</h1>
 
 
@@ -11,7 +16,7 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
 
 <hr><p>
 
-<form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+
 <!--
     File Uploads
 -->
@@ -20,12 +25,14 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
     </div>
     <div id="normal">
         Select files OR drag them into the box below.
-        <input id="file-picker" type="file" name="file" accept="image/*" multiple><p>
     </div>
-
-    <div id="dropbox">
-            Drag and Drop Files Here<br />
-    </div><p>
+    
+    <table>
+        <tr>
+            {{configuration['dropbox']['html']}}
+        </tr>
+    </table>
+    <p>
 
     <fieldset id="progress" style="display: none">
         <legend>Files Progress</legend>
@@ -34,11 +41,14 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
             <div id="progress-bar" class="progress-bar">0%</div>
         </div>
     </fieldset><p>
+<!--
 </form>
-<form id="configuration_options" action="/update_configuration" method="POST" enctype="multipart/form-data">
+-->
+
 <!--
     AUDIO
 -->
+<form id="configuration_options" action="/update_configuration" method="POST" enctype="multipart/form-data">
     <table>
         <tr>
             <td>
@@ -117,18 +127,27 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
             </td>
             <td>
         </tr>
+</form>
+<form id="reboot" action="/reboot">
         <tr>
             <td>
                 <div id="radioButtons">
-                    <button type="reboot">Reboot</button>
+                    <button type="reboot" onclick="reboot()">Reboot</button>
                 </div>
             </td>
         </tr> 
     </table>   
 </form>
+<script>
+    function reboot() 
+    {
+        document.getElementById('reboot').submit();
+    }
+</script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/uploadr.js') }}"></script>
+
 
 </body>
 </html>

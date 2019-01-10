@@ -13,13 +13,13 @@ body {
 */
 #heading1 
 {
-    font-size: 1.0em;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
 #radioButtons
 {
-    font-size: 1.0em;
+    font-size: 1.5em;
     font-weight: normal;
 }
 
@@ -27,19 +27,19 @@ body {
 {
     margin: auto
 }
-#dropbox {
+.dropbox {
     border: 1vh solid rgba(0, 0, 0, 1);
     background-color: rgba(0, 0, 0, 0.2);
     margin: auto;
-    width: 90vw;
+    width: 45vw;
     height: 20vh;
 
-    font-size: 1.0em;
+    font-size: 1.5em;
     font-weight: bold;
     text-align: center;
 }
 
-#dropbox.active {
+.dropbox.active {
     border: 1vh solid rgba(255, 0, 0, 1);
     background-color: rgba(255, 0, 0, 0.2);
 }
