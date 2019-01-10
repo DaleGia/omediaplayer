@@ -24,8 +24,6 @@ configuration_settings['audio']['audio_muting'] = {'mute': '', 'unmute': ''}
 configuration_settings['player'] = {'time_server_address': 'pool.ntp.org'}
 configuration_settings['dropbox'] = {'css_width': '0', 'html': ''}
 
-usb_paths = []
-
 def get_display_status():
     p = Popen(['vcgencmd', 'display_power'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     p.wait()
@@ -54,7 +52,6 @@ def get_form(number):
  
 
 def get_available_usb_paths():
-    usb_paths.clear()
     configuration_settings['dropbox']['html'] = ''
     configuration_settings['dropbox']['css_width'] = 0
     css_width_count = 0
@@ -62,23 +59,19 @@ def get_available_usb_paths():
     p1.wait()
     output = str(p1.communicate()[0])
     if(output.find("/dev/sda1") > -1):
-        usb_paths.append("/mnt/omedia_usb1")
         configuration_settings['dropbox']['html'] += get_form(1)
         css_width_count += 1
 
     if(output.find("/dev/sdb1") > -1):
-        usb_paths.append("/mnt/omedia_usb2")
         configuration_settings['dropbox']['html'] += get_form(2)
         css_width_count += 1
 
     if(output.find("/dev/sdc1") > -1):
-        usb_paths.append("/mnt/omedia_usb3")
         configuration_settings['dropbox']['html'] += "</tr><tr>"
         configuration_settings['dropbox']['html'] += get_form(3)
         css_width_count += 1
 
     if(output.find("/dev/sdd1") > -1):
-        usb_paths.append("/mnt/omedia_usb4")
         configuration_settings['dropbox']['html'] += get_form(4) 
         css_width_count += 1
     
@@ -92,31 +85,31 @@ def reboot():
 def index() :
     get_configuration_settings()
     get_available_usb_paths()
-    return render_template("index.html", configuration=configuration_settings, usb=usb_paths)
+    return render_template("index.html", configuration=configuration_settings)
 
 @app.route("/upload_usb1", methods=["POST"])
 def upload_usb1():
     form = request.form
     upload_handler(form, "/mnt/omedia_usb1")
-    return render_template("index.html", configuration=configuration_settings, usb=usb_paths)
+    return ""
 
 @app.route("/upload_usb2", methods=["POST"])
 def upload_usb2():
     form = request.form
     upload_handler(form, "/mnt/omedia_usb2")
-    return render_template("index.html", configuration=configuration_settings, usb=usb_paths)
+    return ""
 
 @app.route("/upload_usb3", methods=["POST"])
 def upload_usb3():
     form = request.form
     upload_handler(form, "/mnt/omedia_usb3")
-    return render_template("index.html", configuration=configuration_settings, usb=usb_paths)
+    return ""
 
 @app.route("/upload_usb4", methods=["POST"])
 def upload_usb4():
     form = request.form
     upload_handler(form, "/mnt/omedia_usb4")
-    return render_template("index.html", configuration=configuration_settings, usb=usb_paths)
+    return ""
 
 def upload_handler(form, upload_path):
     # Is the upload using Ajax, or a direct POST by the form?

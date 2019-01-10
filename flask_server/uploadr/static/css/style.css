@@ -3,6 +3,7 @@ body {
     font-family: Verdana,Arial,Helvetica,sans-serif;
     font-size: small;
     color: #000000;
+    max-width: 100%;
 }
 
 /*
@@ -11,15 +12,21 @@ body {
     padding: 20px;
 }
 */
+html
+{
+    font-size: 20px;
+    
+}
+
 #heading1 
 {
-    font-size: 1.5em;
+    font-size: 20px;
     font-weight: bold;
 }
 
 #radioButtons
 {
-    font-size: 1.5em;
+    font-size: 20px;
     font-weight: normal;
 }
 
@@ -34,7 +41,7 @@ body {
     width: 45vw;
     height: 20vh;
 
-    font-size: 1.5em;
+    font-size: 20px;
     font-weight: bold;
     text-align: center;
 }

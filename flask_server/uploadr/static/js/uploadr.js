@@ -15,7 +15,6 @@ function handle_file_change(event) {
       	var url = $(this).parent().parent().parent().attr("action");
         handleFiles(this.files);
         doUpload(url);
-        //updatePendingFileText();
 
 }
 $(document).ready(function() {
@@ -90,18 +89,7 @@ function doUpload(url) {
         data: fd,
         success: function(data) {
             $progressBar.css({"width": "100%"});
-            data = JSON.parse(data);
-
-            // How'd it go?
-            if (data.status === "error") {
-                // Uh-oh.
-                window.alert(data.msg);
-                $("#upload-form :input").removeAttr("disabled");
-                return;
-            }
-            else {
-                location.reload();
-            }
+            location.reload(true);
         },
     });
 }
