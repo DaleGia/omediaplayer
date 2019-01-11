@@ -9,13 +9,8 @@ href="{{ url_for('static', filename='css/style.css') }}">
 
 
 <body>
-<h1>OMedia Player Interface</h1>
-
-
-Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</strong> in the form below.<p>
-
+<div id="title">OMedia Player Interface</div>
 <hr><p>
-
 
 <!--
     AUDIO
@@ -31,36 +26,38 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         </tr>
         <tr>
             <td>
-                <div id="radioButtons">
-                    <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" id="both" value="both" {{configuration['audio']['audio_output']['both']}}> HDMI and Analog
+                <div class="radioButtons">
+                    <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" id="both" value="both" {{configuration['audio']['audio_output']['both']}}>HDMI and Analog
                 </div>
             </td>
             <td>
-                <div id="radioButtons">
+                <div  class="radioButtons">
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_muting" value="unmute" {{configuration['audio']['audio_muting']['unmute']}}> Unmute
                 </div>
             </td>
         </tr>
         <tr>
             <td>
-                <div id="radioButtons">
+                <div class="radioButtons">
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" value="hdmi" {{configuration['audio']['audio_output']['hdmi']}}> HDMI only
                 </div>
-           </td>     
+            </td>     
             <td>
-                <div id="radioButtons">
+                <div class="radioButtons">
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_muting" value="mute" {{configuration['audio']['audio_muting']['mute']}}> Mute
-                </div>            
+                </div>    
             </td>   
         </tr>
         <tr>
             <td>
-                <div id="radioButtons">
+                <div class="radioButtons">
                     <input type="radio" onclick="document.getElementById('configuration_options').submit();" name="audio_output" value="analog" {configuration['audio']['audio_output']['analog']}}>  Analog only
                 </div>             
             </td>
-        </tr>   
+        </tr> 
     </table>   
+<hr><p>
+
 <!--
     Display
 -->
@@ -87,6 +84,10 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
                 </div>           
             </td>        
         </tr>  
+    </table>
+</form>
+<hr><p>
+
 <!--
     Player
 -->
@@ -100,15 +101,21 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
             </td>
             <td>
         </tr>
-</form>
         <tr>
             <td>
                 <div id="radioButtons">
-                    <a href="/reboot"><input type="button" value="Reboot"></a>
+                    <a href="/reboot"><input type="button" class="button" value="Reboot"></a>
                 </div>
             </td>
         </tr> 
     </table>   
+<hr><p>
+
+<p>
+<p>
+<p>
+<input type=button class="button" value="show/hide media editing" onclick="show_hide_buttons('files')"></input>
+<div class=files>
 <!--
     File Uploads
 -->
@@ -116,7 +123,8 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
         Files:<br>
     </div>
     <div id="normal">
-        Select files OR drag them into the box below.
+        Select files OR drag them into the box below.<p>
+        Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</strong> in the form below.<p>
     </div>
     
     <table>
@@ -134,30 +142,41 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
     </fieldset><p>
 
     <div id="heading1">
-        Playlist:<br>
+        Playlist:     <input type=button class="button" value="show/hide playlist editing" onclick="show_hide_buttons('delete_button')"></input>
+
     </div>
-    <div id="normal">
-        Deleting will delete media from device and cannot be undone.
-    </div>
-<form id="deleteFile" action="/deletefile" method="POST" enctype="text/plain" >
-    <table>
-            {{configuration['playlist']['html']}}
-    </table>
-</form>
+    
+    <div class="delete_button">
+            <b>Deleting will delete media from device and cannot be undone.</b>
+    </div>           
+    <form id="deleteFile" action="/deletefile" method="POST" enctype="text/plain" >
+        <table>
+                {{configuration['playlist']['html']}}
+        </table>
+    </form>
     <p>
 <!--
 </form>
 -->
-
+</div>
 <script>
-    function reboot() 
+function show_hide_buttons(class_name) 
+{
+    var elements = document.getElementsByClassName(class_name)
+    for (var i = 0; i < elements.length; i++)
     {
-        document.getElementById('reboot').submit();
-    }
-    function deleteFile(filePath)
-    {
-        document.getElementById('deleteFile').submit();
-    }
+        if(elements[i].style.visibility == 'hidden') 
+        {
+            elements[i].style.visibility = 'visible'; 
+            elements[i].style.display = 'block'; 
+        } 
+        else 
+        {
+            elements[i].style.visibility = 'hidden'; 
+            elements[i].style.display = 'none';    
+        }
+    }   
+}
 </script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>

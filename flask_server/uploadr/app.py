@@ -1,3 +1,4 @@
+
 from flask import Flask, request, redirect, url_for, render_template, Markup
 import os
 import json
@@ -13,7 +14,6 @@ import subprocess
 from time import sleep
 
 app = Flask(__name__)
-#UPLOAD_FOLDER="uploadr/static/uploads/"
 
 configuration_settings = {}
 configuration_settings['display'] = {}
@@ -23,8 +23,6 @@ configuration_settings['audio']['audio_output'] = {'both': 'checked', 'hdmi': ''
 configuration_settings['audio']['audio_muting'] = {'mute': '', 'unmute': ''}
 configuration_settings['dropbox'] = {'css_width': '0', 'html': ''}
 configuration_settings['playlist'] = {'html': ''}
-
-playlist = []
 
 def get_display_status():
     p = Popen(['vcgencmd', 'display_power'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -54,53 +52,44 @@ def get_usb_path_form(number):
     return """<td><form id="upload-form-{}" action="/upload_usb{}" method="POST" enctype="multipart/form-data"><b>/mnt/omedia_usb{}</b><div class="dropbox" id="dropbox{}">Drag and Drop Files Here<p><input id="file-picker-{}" class="file-picker" type="file" accept="H.264/*" multiple><p></div></form></td>""".format(number, number, number ,number, number)
  
 def get_file_paths_form(file_path, playlist_item_number):
-    return """<tr><td>{}</td><td><a href="/delete_file/{}"><input type="button" value="delete"></a></td></tr>""".format(file_path, playlist_item_number)
+    return """<tr><td>{}</td><td><a href="/delete_file/{}"><input type="button" class="delete_button" value="delete"></a></td></tr>""".format(file_path, playlist_item_number)
 def get_available_usb_paths():
     configuration_settings['dropbox']['html'] = ''
     configuration_settings['dropbox']['css_width'] = 0
     configuration_settings['playlist']['html'] = ''
 
-    playlist.clear()
-
     css_width_count = 0
-    p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    p1.wait()
-    output = str(p1.communicate()[0])
-    if(output.find("/dev/sda1") > -1):
+    app.config['usb'].lock.acquire()
+
+    if(app.config['usb']._mount_mapping[0][3]):
         configuration_settings['dropbox']['html'] += get_usb_path_form(1)
         css_width_count += 1
-        for file in glob.glob("/mnt/omedia_usb1/*"):
-            playlist.append(file)
 
 
-    if(output.find("/dev/sdb1") > -1):
+    if(app.config['usb']._mount_mapping[1][3]):
         configuration_settings['dropbox']['html'] +=  get_usb_path_form(2)
         css_width_count += 1
-        for file in glob.glob("/mnt/omedia_usb2/*"):
-            playlist.append(file)
 
-    if(output.find("/dev/sdc1") > -1):
+    if(app.config['usb']._mount_mapping[2][3]):
         configuration_settings['dropbox']['html'] += "</tr><tr>"
         configuration_settings['dropbox']['html'] +=  get_usb_path_form(3)
         css_width_count += 1
-        for file in glob.glob("/mnt/omedia_usb3/*"):
-            playlist.append(file)
 
-    if(output.find("/dev/sdd1") > -1):
+    if(app.config['usb']._mount_mapping[3][3]):
         configuration_settings['dropbox']['html'] +=  get_usb_path_form(4) 
         css_width_count += 1
-        for file in glob.glob("/mnt/omedia_usb4/*"):
-            playlist.append(file)
+
+    index = 0    
+    for file in app.config['usb'].playlist:
+        configuration_settings['playlist']['html'] += get_file_paths_form(file, index)
+        index += 1
+    app.config['usb'].lock.release()
+
+    if(css_width_count == 0):
+        css_width_count = 1
 
     configuration_settings['dropbox']['html'] = Markup( configuration_settings['dropbox']['html'])
     configuration_settings['dropbox']['css_width'] = Markup(str(90/css_width_count)+"vw")
-
-    playlist.sort()
-    index = 0
-    for file in playlist:
-        configuration_settings['playlist']['html'] += get_file_paths_form(file, index)
-        index += 1
-
     configuration_settings['playlist']['html'] = Markup(configuration_settings['playlist']['html'])
 
 def reboot():

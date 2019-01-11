@@ -3,6 +3,9 @@ import networking
 import time
 import threading
 import subprocess
+#from flask import Flask
+
+from flask_server.uploadr.app import app
 
 def main():
     print("starting")
@@ -11,16 +14,32 @@ def main():
     usb_mounting_thread = threading.Thread(target=mount_loop, args=(usb, 0.5))
 #    splash_screen_thread = threading.Thread(target=splash_screen_renderer, args=(network, 1))
     
-    print("Starting flask server...")
-    flask_server = subprocess.Popen(["python3", "flask_server/runserver.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Starting usb mounter...")
     usb_mounting_thread.start()
-    print("Starting splash screen in 3 seconds...")
-    time.sleep(3)
 #    splash_screen_thread.start()
+
+#    app = Flask(__name__)
+    app.config['usb'] = usb
+    app.config['network'] = network 
+    flask_options = dict(
+        host='0.0.0.0',
+        debug=True,
+        port=8000,
+        threaded=True,
+    )
+    print("Starting web server...")
+    app.run(**flask_options)
+
+
+
 #    splash_screen_thread.join()
     usb_mounting_thread.join()
+
+#    flask_server = subprocess.Popen(["python3", "flask_server/runserver.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)   
+#    web_server_thread = threading.Thread(target=app.run, kwargs=(flask_options))
+#    web_server_thread.start()   
+
     print("finished")
 
 def splash_screen_renderer(network, poll_period):
@@ -41,30 +60,9 @@ def splash_screen_renderer(network, poll_period):
     p1.wait()
     p1 = subprocess.Popen(['figlet', 'Please upload/insert H.264 media content...', '-ctf', 'term'])
 
-    #while True:
-        #network.get_all_ip_addresses()
-        #render_splash_screen(network.eth0_ip_address, network.wlan0_ip_address)
-        #time.sleep(poll_period)
-
-#def render_splash_screen(eth0_ip_address, wlan0_ip_address):
-#    p1 = subprocess.Popen(['tput', 'sc'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-#    p1.wait()
-#    p1 = subprocess.Popen(['figlet', 'eth0: ' + eth0_ip_address, '-ctf', 'term'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-#    p1.wait()
-#    p1 = subprocess.Popen(['figlet', 'wlan0: ' + wlan0_ip_address, '-ctf', 'term'],  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-#    p1.wait()
-#    p1 = subprocess.Popen(['figlet', 'Please upload/insert H.264 media content...', '-ctf', 'term'])
-#    p1.wait()
-#    p1 = subprocess.Popen(['tput', 'rc'])
-#    p1.wait()
-
 def mount_loop(usb, poll_period):
     while True:
         usb.usb_mount()
-        #usb.playlist_lock.acquire()
-        #for file in usb.playlist:
-            #print("playlist: " + file)
-        #usb.playlist_lock.release()
         time.sleep(poll_period)
 
 if __name__ == '__main__':

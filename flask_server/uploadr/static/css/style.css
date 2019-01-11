@@ -6,15 +6,27 @@ body {
     max-width: 100%;
 }
 
-/*
-#dropbox {
-    border: 2px dashed #000000;
-    padding: 20px;
-}
-*/
 html
 {
     font-size: 16px;    
+}
+
+#title
+{
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+.delete_button
+{
+    visibility: hidden;
+    display: none;
+}
+
+.files
+{
+    visibility: hidden;
+    display: none;
 }
 
 #heading1 
