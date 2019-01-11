@@ -90,6 +90,7 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
 <!--
     Player
 -->
+    <p>
     <table>
         <tr>
             <td>
@@ -100,16 +101,14 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
             <td>
         </tr>
 </form>
-<form id="reboot" action="/reboot">
         <tr>
             <td>
                 <div id="radioButtons">
-                    <button type="reboot" onclick="reboot()">Reboot</button>
+                    <a href="/reboot"><input type="button" value="Reboot"></a>
                 </div>
             </td>
         </tr> 
     </table>   
-</form>
 <!--
     File Uploads
 -->
@@ -125,19 +124,6 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
             {{configuration['dropbox']['html']}}
         </tr>
     </table>
-    <div id="heading1">
-        Playlist:<br>
-    </div>
-    <div id="normal">
-        Deleting will delete media from device and cannot be undone.
-    </div>
-<form id="configuration_options" action="/update_configuration" method="POST" enctype="multipart/form-data">
-<form id="deleteFile" action="/deletefile" method="POST" enctype="text/plain" >
-    <table>
-            {{configuration['playlist']['html']}}
-    </table>
-</form>
-    <p>
 
     <fieldset id="progress" style="display: none">
         <legend>Files Progress</legend>
@@ -146,6 +132,19 @@ Only upload H.264 encoded files such as<strong> AVI, MOV, MK4, MP4, and M4V</str
             <div id="progress-bar" class="progress-bar">0%</div>
         </div>
     </fieldset><p>
+
+    <div id="heading1">
+        Playlist:<br>
+    </div>
+    <div id="normal">
+        Deleting will delete media from device and cannot be undone.
+    </div>
+<form id="deleteFile" action="/deletefile" method="POST" enctype="text/plain" >
+    <table>
+            {{configuration['playlist']['html']}}
+    </table>
+</form>
+    <p>
 <!--
 </form>
 -->

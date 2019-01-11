@@ -54,13 +54,12 @@ def get_usb_path_form(number):
     return """<td><form id="upload-form-{}" action="/upload_usb{}" method="POST" enctype="multipart/form-data"><b>/mnt/omedia_usb{}</b><div class="dropbox" id="dropbox{}">Drag and Drop Files Here<p><input id="file-picker-{}" class="file-picker" type="file" accept="H.264/*" multiple><p></div></form></td>""".format(number, number, number ,number, number)
  
 def get_file_paths_form(file_path, playlist_item_number):
-    return """<tr><td>{}</td><td><a href="/delete_file/{}"><input type="button" value="delete"></a></td></tr>""".format(file_path, playlist_item_number)
+    return """<tr><td>{}</td><td><a href="/delete_file/{}"><input type="button" value="{}">delete</a></td></tr>""".format(file_path, playlist_item_number, playlist_item_number, file_path)
 def get_available_usb_paths():
     configuration_settings['dropbox']['html'] = ''
     configuration_settings['dropbox']['css_width'] = 0
     configuration_settings['playlist']['html'] = ''
-
-    playlist.clear()
+    playlist = []
 
     css_width_count = 0
     p1 = subprocess.Popen("mount", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -168,16 +167,9 @@ def reboot_device():
 
 @app.route("/delete_file/<string:id>", methods=["GET", "POST"])
 def delete_file(id):
-    print("len( playlist): " + str(len(playlist)))
-    print("str(int(id)): " + str(int(id)))
-    if(len(playlist) > int(id)):
-        os.system("rm " +  playlist[int(id)])
-
-    return redirect(url_for("index"))
-
-
-def get_playlist():
-    return playlist
+    print("id: ")
+    os.system("rm " + playlist[int(id)])
+    return redirect(url_for("index.html"))
 
 @app.route("/update_configuration", methods=["POST"])
 def update_configuration():

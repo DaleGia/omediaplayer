@@ -14,18 +14,18 @@ body {
 */
 html
 {
-    font-size: 20px;    
+    font-size: 16px;    
 }
 
 #heading1 
 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 #radioButtons
 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: normal;
 }
 
@@ -41,7 +41,7 @@ html
     width: 45vw;
     height: 20vh;
 
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     text-align: center;
 }
