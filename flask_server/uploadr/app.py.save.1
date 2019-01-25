@@ -157,8 +157,6 @@ def reboot_device():
 
 @app.route("/delete_file/<string:id>", methods=["GET", "POST"])
 def delete_file(id):
-    print("len( playlist): " + str(len(playlist)))
-    print("str(int(id)): " + str(int(id)))
     if(len(playlist) > int(id)):
         os.system("rm " +  playlist[int(id)])
 
@@ -170,19 +168,12 @@ def get_playlist():
 
 @app.route("/update_configuration", methods=["POST"])
 def update_configuration():
-    app.config['video'].lock.acquire()
     if(request.form.get('audio_output', 'error') == 'both'):
         print("audio_output: both")
-        app.config['video'].omx_arguments['audio_output'] = 'both'
-        app.config['video'].argument_change_flag = True
     elif(request.form.get('audio_output', 'error') == 'hdmi'):
         print("audio_output: hdmi")
-        app.config['video'].omx_arguments['audio_output'] = 'hdmi'
-        app.config['video'].argument_change_flag = True
     elif(request.form.get('audio_output', 'error') == 'analog'):
         print("audio_output: analog")
-        app.config['video'].omx_arguments['audio_output'] = 'analog'
-        app.config['video'].argument_change_flag = True
     else:
         print("audio_output: error")
 
