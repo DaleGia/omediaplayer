@@ -48,6 +48,23 @@ def get_configuration_settings():
         configuration_settings['display']['display_output']['hdmi'] = ''
         configuration_settings['display']['display_output']['none'] = 'checked'	
 
+    if not app.config['video']['lock'].acquire(True, 2):
+       print("Error: could not acquire video object thread lock")
+       return
+    
+    configuration_settings['audio']['audio_output']['hdmi'] = ''
+    configuration_settings['audio']['audio_output']['both'] = ''
+    configuration_settings['audio']['audio_output']['analog'] = ''
+
+    if(app.config['video']['audio_output'] == 'both'):
+        configuration_settings['audio']['audio_output']['both'] = 'checked'
+    elif(app.config['video']['audio_output'] == 'hdmi'):
+        configuration_settings['audio']['audio_output']['hdmi'] = 'checked'
+    elif(app.config['video']['audio_output'] == 'analog'):
+        configuration_settings['audio']['audio_output']['analog'] = 'checked'
+
+    app.config['video']['lock'].release()
+
 def get_usb_path_form(number):
     return """<td><form id="upload-form-{}" action="/upload_usb{}" method="POST" enctype="multipart/form-data"><b>/mnt/omedia_usb{}</b><div class="dropbox" id="dropbox{}">Drag and Drop Files Here<p><input id="file-picker-{}" class="file-picker" type="file" accept="H.264/*" multiple><p></div></form></td>""".format(number, number, number ,number, number)
  
@@ -170,21 +187,22 @@ def get_playlist():
 
 @app.route("/update_configuration", methods=["POST"])
 def update_configuration():
-    if not app.config['video'].lock.acquire(True, 2):
+    if not app.config['video']['lock'].acquire(True, 2):
        print("Error: could not acquire video object thread lock")
        return render_template("index.html", configuration=configuration_settings)
     if(request.form.get('audio_output', 'error') == 'both'):
         print("audio_output: both")
-        app.config['video'].omx_arguments['audio_output'] = 'both'
-        app.config['video'].argument_change_flag = True
+        print("Changing audio_output to both")
+        app.config['video']['audio_output'] = 'both'
+        app.config['video']['arguments_change_flag'] = True
     elif(request.form.get('audio_output', 'error') == 'hdmi'):
         print("audio_output: hdmi")
-        app.config['video'].omx_arguments['audio_output'] = 'hdmi'
-        app.config['video'].argument_change_flag = True
+        app.config['video']['audio_output'] = 'hdmi'
+        app.config['video']['arguments_change_flag'] = True
     elif(request.form.get('audio_output', 'error') == 'analog'):
         print("audio_output: analog")
-        app.config['video'].omx_arguments['audio_output'] = 'analog'
-        app.config['video'].argument_change_flag = True
+        app.config['video']['audio_output'] = 'analog'
+        app.config['video']['arguments_change_flag'] = True
     else:
         print("audio_output: error")
 
@@ -194,7 +212,7 @@ def update_configuration():
         print("audio_muting: unmute")
     else:
         print("audio_muting: error")
-    app.config['video'].lock.release()
+    app.config['video']['lock'].release()
 
     if(request.form.get('display_output', 'error') == 'hdmi'):
         print("display_output: hdmi")

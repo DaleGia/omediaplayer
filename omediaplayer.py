@@ -1,9 +1,12 @@
+import sys
+import argparse
 import usb_mounter
 import networking
 import video_loop
 import time
 import threading
 import subprocess
+import logging
 #from flask import Flask
 
 from flask_server.uploadr.app import app
@@ -25,19 +28,21 @@ def main():
     video_loop_thread = threading.Thread(target=video_looper_loop, args=(video,))
     video_loop_thread.start()
 
-#    app = Flask(__name__)
+    parser = argparse.ArgumentParser(description="Uploadr")
+    parser.add_argument("--port","-p",type=int,help="Port to listen on",default=8000,)
+    args = parser.parse_args()
     app.config['usb'] = usb
     app.config['network'] = network 
-    app.config['video'] = video
+    app.config['video'] = video.omx_arguments
     flask_options = dict(
         host='0.0.0.0',
         debug=True,
         port=8000,
-        threaded=True,
+        threaded=False,
     )
     print("Starting web server...")
     app.run(**flask_options)
-
+    print("Probably shouldnt reach here...")
 
 
     usb_mounting_thread.join()
@@ -79,7 +84,6 @@ def mount_loop(usb, poll_period):
 def video_looper_loop(video):
     while True:
         video.play_playlist()
-        time.sleep(0.1)
-
+        print("Playlist finished... looping...")
 if __name__ == '__main__':
     main()
