@@ -12,15 +12,18 @@ def main():
     print("starting")
     usb = usb_mounter.usb_mounter()
     usb_mounting_thread = threading.Thread(target=mount_loop, args=(usb, 0.5))
+    print("starting usb mounting thread.")
     usb_mounting_thread.start()
 
+    print("starting splash screen thread.")
     network = networking.networking()
 #    splash_screen_thread = threading.Thread(target=splash_screen_renderer, args=(network, 1))
 #    splash_screen_thread.start()
 
+    print("starting video looping thread")
     video = video_loop.video_loop(usb)
-#    video_loop_thread = threading.Thread(target=video_looper_loop, args=(video,))
-#    video_loop_thread.start()
+    video_loop_thread = threading.Thread(target=video_looper_loop, args=(video,))
+    video_loop_thread.start()
 
 #    app = Flask(__name__)
     app.config['usb'] = usb

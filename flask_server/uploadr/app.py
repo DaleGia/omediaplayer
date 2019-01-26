@@ -170,7 +170,9 @@ def get_playlist():
 
 @app.route("/update_configuration", methods=["POST"])
 def update_configuration():
-    app.config['video'].lock.acquire()
+    if not app.config['video'].lock.acquire(True, 2):
+       print("Error: could not acquire video object thread lock")
+       return render_template("index.html", configuration=configuration_settings)
     if(request.form.get('audio_output', 'error') == 'both'):
         print("audio_output: both")
         app.config['video'].omx_arguments['audio_output'] = 'both'
@@ -192,6 +194,7 @@ def update_configuration():
         print("audio_muting: unmute")
     else:
         print("audio_muting: error")
+    app.config['video'].lock.release()
 
     if(request.form.get('display_output', 'error') == 'hdmi'):
         print("display_output: hdmi")

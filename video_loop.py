@@ -1,6 +1,7 @@
 import subprocess
 import time
 import threading
+
 class video_loop(object):
     def __init__(self, arg):
        self.playlist_paths = []
@@ -11,7 +12,7 @@ class video_loop(object):
        self.usb = arg
 
     def _arguments_builder(self):
-        self.lock.acquire()
+        self.lock.acquire(True, 2)
         self._argument_list.clear()
         if(self.omx_arguments['black_background']):
              self._argument_list.append("-b")
@@ -28,43 +29,59 @@ class video_loop(object):
         self.lock.release()
  
     def play_playlist(self):
-        self.usb.lock.acquire()
+        if not self.usb.lock.acquire(True, 2):
+            return
         self.playlist_paths = self.usb.playlist
-        self.usb.lock.release()
         number_of_files = len(self.playlist_paths)
+        self.usb.lock.release()
         if(number_of_files > 1):
-            self.lock.acquire()
+            if not self.lock.acquire(True, 2):
+                return
             self.omx_arguments['loop'] = False 
             self.omx_arguments['refresh'] = True 
             self.omx_arguments['black_background'] = True 
             self._arguments_builder()
+            self.lock.release()
+
             for file in playlist_paths:
+                if not self.lock.acquire(True, 2):
+                    return
+                logging.info('Playing: ' + file) 
                 print('Playing: ' + file) 
                 p1 = subprocess.Popen("omxplayer", file, self._argument_list, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                self.lock.release()
                 poll = p1.poll()
                 while not p1.poll():
+                    if not self.lock.acquire(True, 2):
+                        return
                     if(self._argument_change_flag):
+                        logging.info('argument change flag detected, reseting') 
                         print('argument change flag detected, reseting') 
                         p1.kill()
                         self.argument_change_flag = False
                         self.lock.release()
-                    else:
-                        self.lock.release()
-                        time.sleep(0.1)
+                    
+                    self.lock.release()
+                    time.sleep(0.1)
 
         elif(number_of_files > 0):
+            if not self.lock.acquire(True, 2):
+                return
             self.omx_arguments['loop'] = True 
             self.omx_arguments['refresh'] = True 
             self.omx_arguments['black_background'] = True 
             self._arguments_builder()
             p1 = subprocess.Popen(["omxplayer", self.playlist_paths[0]] + self._argument_list,  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.lock.release()
             poll = p1.poll()
             while not p1.poll():
+                if not self.lock.acquire(True, 2):
+                    return
                 if(self._argument_change_flag):
+                    logging.info('argument change flag detected, reseting') 
                     print('argument change flag detected, reseting') 
                     p1.kill()
                     self.argument_change_flag = False
-                    self.lock.release()
-                else:
-                    self.lock.release()
-                    time.sleep(0.1)
+
+                self.lock.release()
+                time.sleep(0.1)
